@@ -139,6 +139,17 @@ void MainWindow::replyToClient(int color){
             send(color, info);
             break;
         }
+        case 9:{
+            std::vector<qint8> info;
+            info.push_back(9);
+            qint8 color_, row_, col_;
+            std::tie(color_, row_, col_) = game->lastChessMan();
+            info.push_back(color_);
+            info.push_back(row_);
+            info.push_back(col_);
+            send(color, info);
+            break;
+        }
         default:{
             qDebug() << "Unknown command.";
         }

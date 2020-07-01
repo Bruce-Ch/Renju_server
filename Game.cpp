@@ -54,3 +54,10 @@ std::ostream& operator<<(std::ostream& out, const Game& game){
     out << *game.chessBoard_;
     return out;
 }
+
+std::tuple<int, int, int> Game::lastChessMan() const {
+    if(stack_->empty()){
+        return std::make_tuple(-1, 0 ,0);
+    }
+    return stack_->top();
+}

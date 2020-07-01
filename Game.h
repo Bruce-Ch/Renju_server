@@ -10,6 +10,7 @@
 #include <tuple>
 #include <string>
 #include <ostream>
+#include <cassert>
 #include "ChessBoard.h"
 #include "Manipulation.h"
 
@@ -26,6 +27,7 @@ public:
     inline int& finished() {
         return finished_;
     }
+    std::tuple<int, int, int> lastChessMan() const; // 若尚无棋子，则返回(-1, 0, 0)
     friend std::ostream& operator<<(std::ostream& out, const Game& game);
 };
 
