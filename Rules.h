@@ -7,6 +7,7 @@
 
 
 #include <list>
+#include <cassert>
 #include "ChessBoard.h"
 
 class Rules {

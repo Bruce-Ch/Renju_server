@@ -1,0 +1,11 @@
+# the following can be built by qmake
+
+.qmake.stash
+Makefile
+makefile
+
+# the following can be built by make
+
+*.o
+moc_*.*
+Renju_server_real
