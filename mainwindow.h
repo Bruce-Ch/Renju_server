@@ -24,6 +24,8 @@ private:
 
 private slots:
     void acceptConnection();
+    void disconnection1();
+    void disconnection2();
     void replyToClient1();
     void replyToClient2();
 
@@ -31,5 +33,6 @@ private:
     void send(int color, const std::vector<qint8>& info);
     void send(int color, qint8 cmd, const QString& info);
     void replyToClient(int color);
+    void disconnection(int color);
 };
 #endif // MAINWINDOW_H

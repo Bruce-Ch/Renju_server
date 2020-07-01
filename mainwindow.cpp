@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <iostream>
+#include <cassert>
 
 MainWindow::MainWindow(QObject *parent)
     : QObject(parent)
@@ -17,17 +18,39 @@ MainWindow::~MainWindow()
 
 void MainWindow::acceptConnection(){
     if(connectionNum >= 2){
+        assert(0);
         return;
     } else {
         socket[connectionNum] = server->nextPendingConnection();
         if(connectionNum){
             std::cout << "Player2 has connected to the server." << std::endl;
             connect(socket[connectionNum], &QTcpSocket::readyRead, this, &MainWindow::replyToClient2);
+            connect(socket[connectionNum], &QTcpSocket::disconnected, this, &MainWindow::disconnection2);
+            server->close();
         } else {
             std::cout << "Player1 has connected to the server." << std::endl;
             connect(socket[connectionNum], &QTcpSocket::readyRead, this, &MainWindow::replyToClient1);
+            connect(socket[connectionNum], &QTcpSocket::disconnected, this, &MainWindow::disconnection1);
         }
         connectionNum++;
+    }
+}
+
+void MainWindow::disconnection1(){
+    disconnection(0);
+}
+
+void MainWindow::disconnection2(){
+    disconnection(1);
+}
+
+void MainWindow::disconnection(int color){
+    std::cout << "Player" << (color ? 2 : 1) << " has safely disconnected from the server" << std::endl;
+    connectionNum--;
+    socket[color]->deleteLater();
+    if(!connectionNum){
+        server->deleteLater();
+        exit(0);
     }
 }
 
