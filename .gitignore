@@ -1,3 +1,7 @@
+# the following are not important in the project
+
+*.pro.user
+
 # the following can be built by qmake
 
 .qmake.stash
@@ -8,4 +12,4 @@ makefile
 
 *.o
 moc_*.*
-Renju_server_real
+Renju_server
