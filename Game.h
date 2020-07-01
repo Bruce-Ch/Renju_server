@@ -1,0 +1,33 @@
+//
+// Created by pc on 2020/6/5.
+//
+
+#ifndef RENJU_GAME_H
+#define RENJU_GAME_H
+
+#include <QtGlobal>
+#include <stack>
+#include <tuple>
+#include <string>
+#include <ostream>
+#include "ChessBoard.h"
+#include "Manipulation.h"
+
+
+class Game {
+    ChessBoard* chessBoard_ = nullptr;
+    std::stack<std::tuple<int, int, int>>* stack_ = nullptr; // 颜色，位置，位置
+    int finished_ = -1;
+public:
+    Game();
+    ~Game();
+    std::vector<qint8> manipulate(const std::vector<qint8>& info);
+    int currentPlayer() const;
+    inline int& finished() {
+        return finished_;
+    }
+    friend std::ostream& operator<<(std::ostream& out, const Game& game);
+};
+
+
+#endif //RENJU_GAME_H
