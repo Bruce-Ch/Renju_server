@@ -18,7 +18,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::acceptConnection(){
     if(connectionNum >= 2){
-        assert(0);
+        QTcpSocket* tmp = server->nextPendingConnection();
+        tmp->close();
+        delete tmp;
         return;
     } else {
         socket[connectionNum] = server->nextPendingConnection();
