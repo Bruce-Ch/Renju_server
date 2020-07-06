@@ -26,7 +26,7 @@ void MainWindow::acceptConnection(){
             std::cout << "Player2 has connected to the server." << std::endl;
             connect(socket[connectionNum], &QTcpSocket::readyRead, this, &MainWindow::replyToClient2);
             connect(socket[connectionNum], &QTcpSocket::disconnected, this, &MainWindow::disconnection2);
-            server->close();
+            server->pauseAccepting();
         } else {
             std::cout << "Player1 has connected to the server." << std::endl;
             connect(socket[connectionNum], &QTcpSocket::readyRead, this, &MainWindow::replyToClient1);
@@ -49,8 +49,9 @@ void MainWindow::disconnection(int color){
     connectionNum--;
     socket[color]->deleteLater();
     if(!connectionNum){
-        server->deleteLater();
-        exit(0);
+        delete game;
+        game = new Game;
+        server->resumeAccepting();
     }
 }
 
