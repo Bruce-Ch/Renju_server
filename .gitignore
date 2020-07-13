@@ -13,3 +13,7 @@ makefile
 *.o
 moc_*.*
 Renju_server
+
+# the following is used to supervise the server
+
+server_work_log.txt
