@@ -7,7 +7,7 @@ MainWindow::MainWindow(QObject *parent)
     : QObject(parent)
 {
     server = new QTcpServer(this);
-    server->listen(QHostAddress::Any, 9999);
+    server->listen(QHostAddress::Any, 10086);
     connect(server, &QTcpServer::newConnection, this, &MainWindow::acceptConnection);
     game = new Game;
 }
