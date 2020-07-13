@@ -30,7 +30,7 @@ private slots:
     void replyToClient2();
 
 private:
-    void send(int color, const std::vector<qint8>& info);
+    void send(int color, qint8 cmd, const QVector<qint8>& info);
     void send(int color, qint8 cmd, const QString& info);
     void replyToClient(int color);
     void disconnection(int color);
