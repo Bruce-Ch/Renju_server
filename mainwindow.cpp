@@ -78,6 +78,9 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             stream >> info;
             cmds[color].enqueue(cmd);
             subcmds[color].enqueue(info);
+            if(cmds[color].length() >= 100){
+                socket[color]->close();
+            }
             continue;
         }
         switch (cmd) {
