@@ -4,6 +4,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QDataStream>
+#include <QQueue>
 
 #include <sstream>
 #include "Game.h"
@@ -19,6 +20,9 @@ public:
 private:
     QTcpServer* server;
     QTcpSocket* socket[2];
+    bool verified[2] = {false, false};
+    QQueue<QVector<qint8>> subcmds[2];
+    QQueue<qint8> cmds[2];
     Game* game;
     int connectionNum = 0;
 

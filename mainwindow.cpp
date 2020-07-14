@@ -51,6 +51,9 @@ void MainWindow::disconnection(int color){
     std::cout << "Player" << (color ? 2 : 1) << " has safely disconnected from the server" << std::endl;
     connectionNum--;
     socket[color]->deleteLater();
+    cmds[color].clear();
+    subcmds[color].clear();
+    verified[color] = false;
     if(!connectionNum){
         delete game;
         game = new Game;
@@ -70,6 +73,13 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
     qint8 cmd;
     while(true){
         stream >> cmd;
+        if(cmd != 10 && !verified[color] && cmd != 0){
+            QVector<qint8> info;
+            stream >> info;
+            cmds[color].enqueue(cmd);
+            subcmds[color].enqueue(info);
+            continue;
+        }
         switch (cmd) {
         case 0:{
             return;
@@ -191,6 +201,14 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             QVector<qint8> info_get;
             stream >> info_get;
             if(versionVerify(info_get)){
+                verified[color] = true;
+                QByteArray array;
+                QDataStream tmpistream(&array, QIODevice::ReadWrite);
+                QDataStream tmpostream(&array, QIODevice::ReadWrite);
+                while(!cmds[color].isEmpty()){
+                    tmpistream << cmds[color].dequeue() << subcmds[color].dequeue();
+                }
+                replyImplement(color, tmpostream);
                 info.push_back(0);
             } else {
                 info.push_back(1);
