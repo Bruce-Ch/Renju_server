@@ -188,11 +188,30 @@ void MainWindow::replyToClient(int color){
             send(color, 9, info);
             break;
         }
+        case 10:{
+            QVector<qint8> info;
+            QVector<qint8> info_get;
+            serverstream >> info_get;
+            if(versionVerify(info_get)){
+                info.push_back(0);
+            } else {
+                info.push_back(1);
+            }
+            send(color, 10, info);
+            break;
+        }
         default:{
             qDebug() << "Unknown command.";
         }
         }
     }
+}
+
+bool MainWindow::versionVerify(const QVector<qint8> &version){
+    if(version[1] >= 2){
+        return true;
+    }
+    return false;
 }
 
 void MainWindow::send(int color, qint8 cmd, const QVector<qint8>& info){

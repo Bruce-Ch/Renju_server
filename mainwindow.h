@@ -34,5 +34,6 @@ private:
     void send(int color, qint8 cmd, const QString& info);
     void replyToClient(int color);
     void disconnection(int color);
+    bool versionVerify(const QVector<qint8>& version);
 };
 #endif // MAINWINDOW_H
