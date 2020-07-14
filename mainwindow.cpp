@@ -66,12 +66,10 @@ void MainWindow::replyToClient2(){
     replyToClient(1);
 }
 
-void MainWindow::replyToClient(int color){
-    QByteArray array = socket[color]->readAll();
-    QDataStream serverstream(&array, QIODevice::ReadWrite);
+void MainWindow::replyImplement(int color, QDataStream &stream){
     qint8 cmd;
     while(true){
-        serverstream >> cmd;
+        stream >> cmd;
         switch (cmd) {
         case 0:{
             return;
@@ -80,7 +78,7 @@ void MainWindow::replyToClient(int color){
             std::vector<qint8> info_get;
             info_get.push_back(1);
             QVector<qint8> info_get_real;
-            serverstream >> info_get_real;
+            stream >> info_get_real;
             for(int i = 0; i < 3; i ++){
                 info_get.push_back(info_get_real[i]);
             }
@@ -105,7 +103,7 @@ void MainWindow::replyToClient(int color){
         case 2:{
             std::vector<qint8> info_get;
             QVector<qint8> info_get_real;
-            serverstream >> info_get_real;
+            stream >> info_get_real;
             info_get.push_back(2);
             info_get.push_back(info_get_real[0]);
             std::vector<qint8> info = game->manipulate(info_get);
@@ -117,7 +115,7 @@ void MainWindow::replyToClient(int color){
         case 3:{
             std::vector<qint8> info_get;
             QVector<qint8> info_get_real;
-            serverstream >> info_get_real;
+            stream >> info_get_real;
             info_get.push_back(3);
             info_get.push_back(info_get_real[0]);
             std::vector<qint8> info = game->manipulate(info_get);
@@ -132,7 +130,7 @@ void MainWindow::replyToClient(int color){
         case 4:{
             std::vector<qint8> info_get;
             QVector<qint8> info_get_real;
-            serverstream >> info_get_real;
+            stream >> info_get_real;
             info_get.push_back(4);
             info_get.push_back(info_get_real[0]);
             std::vector<qint8> info = game->manipulate(info_get);
@@ -146,14 +144,14 @@ void MainWindow::replyToClient(int color){
         }
         case 5:{
             QVector<qint8> info, info_get;
-            serverstream >> info_get;
+            stream >> info_get;
             info.push_back(color);
             send(color, 5, info);
             break;
         }
         case 6:{
             QVector<qint8> info_get;
-            serverstream >> info_get;
+            stream >> info_get;
             std::stringstream ss;
             ss << *game;
             std::string infoStdStr;
@@ -165,7 +163,7 @@ void MainWindow::replyToClient(int color){
         case 7:{
             QVector<qint8> info;
             QVector<qint8> info_get;
-            serverstream >> info_get;
+            stream >> info_get;
             info.push_back(game->currentPlayer());
             send(color, 7, info);
             break;
@@ -173,7 +171,7 @@ void MainWindow::replyToClient(int color){
         case 8:{
             QVector<qint8> info;
             QVector<qint8> info_get;
-            serverstream >> info_get;
+            stream >> info_get;
             info.push_back(game->finished());
             send(color, 8, info);
             break;
@@ -181,7 +179,7 @@ void MainWindow::replyToClient(int color){
         case 9:{
             QVector<qint8> info;
             QVector<qint8> info_get;
-            serverstream >> info_get;
+            stream >> info_get;
             qint8 color_, row_, col_;
             std::tie(color_, row_, col_) = game->lastChessMan();
             info << color_ << row_ << col_;
@@ -191,7 +189,7 @@ void MainWindow::replyToClient(int color){
         case 10:{
             QVector<qint8> info;
             QVector<qint8> info_get;
-            serverstream >> info_get;
+            stream >> info_get;
             if(versionVerify(info_get)){
                 info.push_back(0);
             } else {
@@ -201,10 +199,23 @@ void MainWindow::replyToClient(int color){
             break;
         }
         default:{
-            qDebug() << "Unknown command.";
+            QVector<qint8> info_get;
+            stream >> info_get;
+            qDebug() << "==========";
+            qDebug() << "Unknown command: " << cmd;
+            for(auto info: info_get){
+                qDebug() << info;
+            }
+            qDebug() << "==========";
         }
         }
     }
+}
+
+void MainWindow::replyToClient(int color){
+    QByteArray array = socket[color]->readAll();
+    QDataStream serverstream(&array, QIODevice::ReadWrite);
+    replyImplement(color, serverstream);
 }
 
 bool MainWindow::versionVerify(const QVector<qint8> &version){

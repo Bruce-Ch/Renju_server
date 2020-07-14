@@ -33,6 +33,7 @@ private:
     void send(int color, qint8 cmd, const QVector<qint8>& info);
     void send(int color, qint8 cmd, const QString& info);
     void replyToClient(int color);
+    void replyImplement(int color, QDataStream& stream);
     void disconnection(int color);
     bool versionVerify(const QVector<qint8>& version);
 };
