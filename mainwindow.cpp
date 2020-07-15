@@ -88,17 +88,13 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             return;
         }
         case 1:{
-            std::vector<qint8> info_get;
-            info_get.push_back(1);
             QVector<qint8> info_get_real;
             stream >> info_get_real;
-            for(int i = 0; i < 3; i ++){
-                info_get.push_back(info_get_real[i]);
-            }
-            if(info_get[1] != game->currentPlayer()){
+            info_get_real.insert(info_get_real.begin(), 1);
+            if(info_get_real[1] != game->currentPlayer()){
                 break;
             }
-            std::vector<qint8> info = game->manipulate(info_get);
+            QVector<qint8> info = game->manipulate(info_get_real);
             QVector<qint8> realinfo;
             realinfo.push_back(info[1]);
             if(info[1]){
@@ -114,24 +110,20 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             break;
         }
         case 2:{
-            std::vector<qint8> info_get;
             QVector<qint8> info_get_real;
             stream >> info_get_real;
-            info_get.push_back(2);
-            info_get.push_back(info_get_real[0]);
-            std::vector<qint8> info = game->manipulate(info_get);
+            info_get_real.insert(info_get_real.begin(), 2);
+            QVector<qint8> info = game->manipulate(info_get_real);
             QVector<qint8> realinfo;
             realinfo.push_back(info[1]);
             send(color, 2, realinfo);
             break;
         }
         case 3:{
-            std::vector<qint8> info_get;
             QVector<qint8> info_get_real;
             stream >> info_get_real;
-            info_get.push_back(3);
-            info_get.push_back(info_get_real[0]);
-            std::vector<qint8> info = game->manipulate(info_get);
+            info_get_real.insert(info_get_real.begin(), 3);
+            QVector<qint8> info = game->manipulate(info_get_real);
             if(!info[1]){
                 game->finished() = 2;
             }
@@ -141,14 +133,13 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             break;
         }
         case 4:{
-            std::vector<qint8> info_get;
             QVector<qint8> info_get_real;
+//            info_get_real.push_back(4);
             stream >> info_get_real;
-            info_get.push_back(4);
-            info_get.push_back(info_get_real[0]);
-            std::vector<qint8> info = game->manipulate(info_get);
+            info_get_real.insert(info_get_real.begin(), 4);
+            QVector<qint8> info = game->manipulate(info_get_real);
             if(!info[1]){
-                game->finished() = !info_get[1];
+                game->finished() = !info_get_real[1];
             }
             QVector<qint8> realinfo;
             realinfo.push_back(info[1]);
