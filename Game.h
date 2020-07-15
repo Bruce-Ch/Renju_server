@@ -22,7 +22,7 @@ class Game {
 public:
     Game();
     ~Game();
-    std::vector<qint8> manipulate(const std::vector<qint8>& info);
+    QVector<qint8> manipulate(const QVector<qint8>& info);
     int currentPlayer() const;
     inline int& finished() {
         return finished_;

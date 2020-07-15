@@ -3,7 +3,6 @@
 //
 
 #include "Game.h"
-
 using namespace std;
 
 Game::Game() {
@@ -16,14 +15,14 @@ Game::~Game() {
     delete stack_;
 }
 
-std::vector<qint8> Game::manipulate(const std::vector<qint8> &info) {
+QVector<qint8> Game::manipulate(const QVector<qint8>& info) {
     /*
      * 1: 落子，由1方发来信息，位置在(2, 3)处
      * 2: 悔棋，由1方发来信息
      * 3: 求和，由1方发来信息
      * 4: 认输，由1方发来信息
      */
-    vector<qint8> res;
+    QVector<qint8> res;
     Manipulation* manipulation;
     switch (info[0]) {
         case 1:

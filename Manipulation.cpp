@@ -9,8 +9,8 @@ using namespace std;
  * 最优先返回命令码
  */
 
-std::vector<qint8> Go::main() {
-    vector<qint8> res;
+QVector<qint8> Go::main() {
+    QVector<qint8> res;
     res.push_back(1);
     /*
      * 成功返回0，
@@ -39,8 +39,8 @@ std::vector<qint8> Go::main() {
     return res;
 }
 
-std::vector<qint8> Retract::main() {
-    vector<qint8> res;
+QVector<qint8> Retract::main() {
+    QVector<qint8> res;
     res.push_back(2);
     /*
      * 成功返回0
@@ -71,8 +71,8 @@ std::vector<qint8> Retract::main() {
     return res;
 }
 
-std::vector<qint8> SueForPeace::main() {
-    vector<qint8> res;
+QVector<qint8> SueForPeace::main() {
+    QVector<qint8> res;
     res.push_back(3);
     /*
      * 成功返回0
@@ -82,8 +82,8 @@ std::vector<qint8> SueForPeace::main() {
     return res;
 }
 
-std::vector<qint8> Abort::main(){
-    vector<qint8> res;
+QVector<qint8> Abort::main(){
+    QVector<qint8> res;
     res.push_back(4);
     /*
      * 成功返回0
