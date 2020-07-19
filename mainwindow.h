@@ -5,6 +5,8 @@
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QQueue>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #include <sstream>
 #include "Game.h"
@@ -40,5 +42,7 @@ private:
     void replyImplement(int color, QDataStream& stream);
     void disconnection(int color);
     bool versionVerify(const QVector<qint8>& version);
+    int versionVerify(const QString& version);
+    QVector<qint8> formManipulate(const QMap<QString, QString>& form);
 };
 #endif // MAINWINDOW_H

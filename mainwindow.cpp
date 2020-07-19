@@ -73,7 +73,7 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
     qint8 cmd;
     while(true){
         stream >> cmd;
-        if(cmd != 10 && !verified[color] && cmd != 0){
+        if(cmd != 11 && !verified[color] && cmd != 0){
             QVector<qint8> info;
             stream >> info;
             cmds[color].enqueue(cmd);
@@ -134,7 +134,6 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
         }
         case 4:{
             QVector<qint8> info_get_real;
-//            info_get_real.push_back(4);
             stream >> info_get_real;
             info_get_real.insert(info_get_real.begin(), 4);
             QVector<qint8> info = game->manipulate(info_get_real);
@@ -190,11 +189,12 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             send(color, 9, info);
             break;
         }
-        case 10:{
+        case 11:{
             QVector<qint8> info;
-            QVector<qint8> info_get;
-            stream >> info_get;
-            if(versionVerify(info_get)){
+            QMap<QString, QString> form;
+            stream >> form;
+            info = formManipulate(form);
+            if(!info[0]){
                 verified[color] = true;
                 QByteArray array;
                 QDataStream tmpistream(&array, QIODevice::ReadWrite);
@@ -203,11 +203,8 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
                     tmpistream << cmds[color].dequeue() << subcmds[color].dequeue();
                 }
                 replyImplement(color, tmpostream);
-                info.push_back(0);
-            } else {
-                info.push_back(1);
             }
-            send(color, 10, info);
+            send(color, 11, info);
             break;
         }
         default:{
@@ -231,10 +228,54 @@ void MainWindow::replyToClient(int color){
 }
 
 bool MainWindow::versionVerify(const QVector<qint8> &version){
-    if(version[1] >= 2){
+    if(version[1] >= 3){
         return true;
     }
     return false;
+}
+
+int MainWindow::versionVerify(const QString &version){
+    QRegularExpression re(R"(v(\d+).(\d+).(\d+))");
+    QRegularExpressionMatch match = re.match(version);
+    if(match.hasMatch()){
+        QVector<qint8> versionVector;
+        versionVector << match.captured(1).toInt() << match.captured(2).toInt() << match.captured(3).toInt();
+        if(versionVerify(versionVector)){
+            return 0;
+        } else {
+            return 1;
+        }
+    } else {
+        return 2;
+    }
+}
+
+QVector<qint8> MainWindow::formManipulate(const QMap<QString, QString> &form){
+    QVector<qint8> ret;
+    QMap<QString, QString>::const_iterator it = form.constBegin();
+    while(it != form.constEnd()){
+        QString key = it.key();
+        QString value = it.value();
+        if(key == "form_type"){
+
+        } else if(key == "version"){
+            int validation = versionVerify(value);
+            if(validation == 1){
+                ret.push_back(1);
+            } else if(validation == 2){
+                ret.push_back(2);
+            }
+        } else if(key == "game_mode"){
+
+        } else {
+            qDebug() << "unknown key: " << key;
+        }
+        ++it;
+    }
+    if(ret.empty()){
+        ret.push_back(0);
+    }
+    return  ret;
 }
 
 void MainWindow::send(int color, qint8 cmd, const QVector<qint8>& info){
