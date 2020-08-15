@@ -21,6 +21,7 @@ SOURCES += \
     Game.cpp \
     Manipulation.cpp \
     Rules.cpp \
+    machineplayer.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -36,4 +37,5 @@ HEADERS += \
     Manipulation.h \
     Rules.h \
     MyErrors.h \
+    machineplayer.h \
     mainwindow.h

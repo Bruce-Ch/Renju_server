@@ -28,6 +28,7 @@ public:
         return finished_;
     }
     std::tuple<int, int, int> lastChessMan() const; // 若尚无棋子，则返回(-1, 0, 0)
+    std::string output();
     friend std::ostream& operator<<(std::ostream& out, const Game& game);
 };
 

@@ -7,9 +7,11 @@
 #include <QQueue>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QThread>
 
 #include <sstream>
 #include "Game.h"
+#include "machineplayer.h"
 
 class MainWindow : public QObject
 {
@@ -28,12 +30,22 @@ private:
     Game* game;
     int connectionNum = 0;
 
+    bool useMachineFlag = false;
+    int machineColor = -1;
+    QThread machineThread;
+
 private slots:
     void acceptConnection();
     void disconnection1();
     void disconnection2();
     void replyToClient1();
     void replyToClient2();
+    void machineGo();
+    void machineResult(QVector<int> result);
+
+signals:
+    void timeToMachineGo();
+    void timeToCompute(const QString& info, int color);
 
 private:
     void send(int color, qint8 cmd, const QVector<qint8>& info);

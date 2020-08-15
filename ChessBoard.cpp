@@ -4,6 +4,7 @@
 
 #include <tuple>
 #include <cassert>
+#include <sstream>
 #include "ChessBoard.h"
 #include "MyErrors.h"
 using namespace std;
@@ -120,6 +121,14 @@ void ChessBoard::eraseChessMan(ChessMan *chessMan) {
     auto* tmp = new ChessMan{2, -1, make_pair(row, col)};
     delete chessManPtrMatrix[row][col];
     chessManPtrMatrix[row][col] = tmp;
+}
+
+std::string ChessBoard::output(){
+    std::stringstream ss;
+    ss << *this;
+    std::string ret;
+    ss >> ret;
+    return ret;
 }
 
 ostream& operator<<(ostream& out, const ChessBoard& chessBoard){

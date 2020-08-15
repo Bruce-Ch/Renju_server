@@ -33,6 +33,7 @@ public:
     ChessMan* setChessMan(int color, int id, Pos pos);
     ChessMan* setChessMan(ChessMan* chessMan); // 以参数为样板设置，并非将参数直接设置
     void eraseChessMan(ChessMan* chessMan);
+    std::string output();
     friend std::ostream& operator<<(std::ostream& out, const ChessBoard& chessBoard);
 
 private:

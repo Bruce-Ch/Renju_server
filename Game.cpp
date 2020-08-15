@@ -3,6 +3,7 @@
 //
 
 #include "Game.h"
+#include <iostream>
 using namespace std;
 
 Game::Game() {
@@ -50,7 +51,7 @@ int Game::currentPlayer() const{
 }
 
 std::ostream& operator<<(std::ostream& out, const Game& game){
-    out << *game.chessBoard_;
+    out << *(game.chessBoard_);
     return out;
 }
 
@@ -59,4 +60,8 @@ std::tuple<int, int, int> Game::lastChessMan() const {
         return std::make_tuple(-1, 0 ,0);
     }
     return stack_->top();
+}
+
+std::string Game::output(){
+    return chessBoard_->output();
 }

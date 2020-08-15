@@ -2,14 +2,18 @@
 #include <iostream>
 #include <cassert>
 #include <QDebug>
+#include <string>
+#include <sstream>
 
 MainWindow::MainWindow(QObject *parent)
     : QObject(parent)
 {
     server = new QTcpServer(this);
     server->listen(QHostAddress::Any, 10086);
-    connect(server, &QTcpServer::newConnection, this, &MainWindow::acceptConnection);
+    connect(server, &QTcpServer::newConnection, this, &MainWindow::acceptConnection);  
+    connect(this, &MainWindow::timeToMachineGo, this, &MainWindow::machineGo);
     game = new Game;
+    qRegisterMetaType<QVector<int> >("QVector<int>");
 }
 
 MainWindow::~MainWindow()
@@ -57,6 +61,8 @@ void MainWindow::disconnection(int color){
     if(!connectionNum){
         delete game;
         game = new Game;
+        useMachineFlag = false;
+        machineColor = -1;
         server->resumeAccepting();
     }
 }
@@ -107,6 +113,8 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
                 }
             }
             send(color, 1, realinfo);
+            //qDebug() << "emit signal for reason 1";
+            emit timeToMachineGo();
             break;
         }
         case 2:{
@@ -117,6 +125,8 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             QVector<qint8> realinfo;
             realinfo.push_back(info[1]);
             send(color, 2, realinfo);
+            //qDebug() << "emit signal for reason 2";
+            emit timeToMachineGo();
             break;
         }
         case 3:{
@@ -207,6 +217,17 @@ void MainWindow::replyImplement(int color, QDataStream &stream){
             send(color, 11, info);
             break;
         }
+        case 12:{
+            QVector<qint8> info;
+            QVector<qint8> info_get;
+            stream >> info_get;
+            machineColor = !info_get[0];
+            info.push_back(0);
+            send(color, 12, info);
+            //qDebug() << "emit signal for reason 12";
+            emit timeToMachineGo();
+            break;
+        }
         default:{
             QVector<qint8> info_get;
             stream >> info_get;
@@ -266,7 +287,9 @@ QVector<qint8> MainWindow::formManipulate(const QMap<QString, QString> &form){
                 ret.push_back(2);
             }
         } else if(key == "game_mode"){
-
+            if(value == "2"){
+                useMachineFlag = 1;
+            }
         } else {
             qDebug() << "unknown key: " << key;
         }
@@ -290,4 +313,32 @@ void MainWindow::send(int color, qint8 cmd, const QString& info){
     QDataStream serverstream(&block, QIODevice::ReadWrite);
     serverstream << cmd << info;
     socket[color]->write(block);
+}
+
+void MainWindow::machineGo(){
+    if(!useMachineFlag) { return; }
+    if(game->currentPlayer() == machineColor){
+        //qDebug() << "Start to compute";
+        std::string info;
+        info = game->output();
+        MachinePlayer* machinePlayer = new MachinePlayer;
+        machinePlayer->moveToThread(&machineThread);
+        connect(&machineThread, &QThread::finished, machinePlayer, &QObject::deleteLater);
+        connect(this, &MainWindow::timeToCompute, machinePlayer, &MachinePlayer::goNext);
+        connect(machinePlayer, &MachinePlayer::resultReady, this, &MainWindow::machineResult);
+        machineThread.start();
+        emit timeToCompute(QString::fromStdString(info), machineColor);
+    }
+}
+
+void MainWindow::machineResult(QVector<int> result){
+    QVector<qint8> goInfo;
+    goInfo << 1 << result[0] << result[1] << result[2];
+    QVector<qint8> res = game->manipulate(goInfo);
+    //qDebug() << res[0] << res[1] << res[2];
+    if(!res[2]){
+        game->finished() = res[3];
+    }
+    machineThread.quit();
+    machineThread.wait();
 }
