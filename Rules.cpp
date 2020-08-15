@@ -93,7 +93,7 @@ bool Rules::checkFive(ChessMan *chessMan, int dir) {
             break;
         }
     }
-    return cnt == 5;
+    return cnt >= 5;
 }
 
 bool Rules::checkLong(ChessMan *chessMan, int dir) {
